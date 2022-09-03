@@ -32,10 +32,16 @@ local state = {
   default_workspace = nil,
   user_workspaces = {},
   lsp_workspaces = {},
-  picker = {},
+  picker = {
+    dispay_full_path = false,
+  },
 }
 
 local function format_filepath(filename, opts)
+  if state.picker.dispay_full_path then
+    return filename
+  end
+
   local original_filename = filename
 
   if state.active_filter then
