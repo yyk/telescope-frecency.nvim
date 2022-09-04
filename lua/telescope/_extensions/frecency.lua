@@ -304,6 +304,7 @@ return telescope.register_extension {
     set_config_state("user_workspaces", ext_config.workspaces, {})
     set_config_state("disable_devicons", ext_config.disable_devicons, false)
     set_config_state("default_workspace", ext_config.default_workspace, nil)
+    set_config_state("picker", ext_config.picker, nil)
 
     -- start the database client
     db_client.init(
