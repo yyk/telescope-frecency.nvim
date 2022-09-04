@@ -32,13 +32,12 @@ local state = {
   default_workspace = nil,
   user_workspaces = {},
   lsp_workspaces = {},
-  picker = {
-    dispay_full_path = false,
-  },
+  picker = nil,
+  display_full_path = false,
 }
 
 local function format_filepath(filename, opts)
-  if state.picker.dispay_full_path then
+  if state.display_full_path then
     return filename
   end
 
@@ -304,7 +303,7 @@ return telescope.register_extension {
     set_config_state("user_workspaces", ext_config.workspaces, {})
     set_config_state("disable_devicons", ext_config.disable_devicons, false)
     set_config_state("default_workspace", ext_config.default_workspace, nil)
-    set_config_state("picker", ext_config.picker, nil)
+    set_config_state("display_full_path", ext_config.display_full_path, nil)
 
     -- start the database client
     db_client.init(
