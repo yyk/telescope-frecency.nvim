@@ -139,7 +139,7 @@ local frecency = function(opts)
     buf_is_loaded = vim.api.nvim_buf_is_loaded
     display_filename = entry.name
     hl_filename = buf_is_loaded(bufnr(display_filename)) and "TelescopeBufferLoaded" or ""
-    display_filename = format_filepath(display_filename, opts)
+    -- display_filename = format_filepath(display_filename, opts)
 
     display_items = state.show_scores and { { entry.score, "TelescopeFrecencyScores" } } or {}
 
