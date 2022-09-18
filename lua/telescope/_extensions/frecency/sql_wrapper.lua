@@ -138,6 +138,10 @@ local queries = {
     cmd      = cmd.eval,
     cmd_data = "DELETE FROM timestamps WHERE id < :id and file_id == :file_id;"
   },
+  recency_score = {
+    cmd = cmd.eval,
+    cmd_data = "select path, CAST((julianday('now') - julianday(max(timestamp))) * 24 * 60 * 60 AS INTEGER) seconds from files f join timestamps t on f.id = t.file_id group by f.id;"
+  }
 }
 
 M.queries = queries

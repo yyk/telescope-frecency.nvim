@@ -184,19 +184,16 @@ local function get_file_scores(show_unindexed, workspace_path)
   if not sql_wrapper then return {} end
 
   local queries = sql_wrapper.queries
-  local files           = sql_wrapper:do_transaction(queries.file_get_entries, {})
-  local timestamp_ages  = sql_wrapper:do_transaction(queries.timestamp_get_all_entry_most_recent_ages , {})
+  local files   = sql_wrapper:do_transaction(queries.recency_score, {})
 
   local scores = {}
   if vim.tbl_isempty(files) then return scores end
   files = workspace_path and filter_workspace(workspace_path, show_unindexed) or files
 
-  local score
   for _, file_entry in ipairs(files) do
-    score = file_entry.count == 0 and 0 or calculate_file_score(file_entry.count, filter_timestamps(timestamp_ages, file_entry.id))
     table.insert(scores, {
       filename = file_entry.path,
-      score    = score
+      score    = file_entry.seconds
     })
   end
 
