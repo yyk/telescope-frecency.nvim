@@ -93,7 +93,7 @@ local function init(db_root, config_ignore_patterns, safe_mode, auto_validate)
   -- setup autocommands
   vim.api.nvim_command("augroup TelescopeFrecency")
   vim.api.nvim_command("autocmd!")
-  vim.api.nvim_command("autocmd BufWinEnter,BufWritePost * lua require'telescope._extensions.frecency.db_client'.autocmd_handler(vim.fn.expand('<amatch>'))")
+  vim.api.nvim_command("autocmd BufEnter,BufWinEnter,BufWritePost * lua require'telescope._extensions.frecency.db_client'.autocmd_handler(vim.fn.expand('<amatch>'))")
   vim.api.nvim_command("augroup END")
 end
 
@@ -176,7 +176,7 @@ local function autocmd_handler(filepath)
 
   -- vim.b.telescope_frecency_registered = 1
   sql_wrapper:update(filepath)
-  vim.notify("Telescope-Frecency: updated " .. filepath)
+  -- vim.notify("Telescope-Frecency: updated " .. filepath)
   -- end
 end
 
