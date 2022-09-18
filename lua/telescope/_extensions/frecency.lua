@@ -263,7 +263,7 @@ local frecency = function(opts)
       return true
     end,
     finder = finders.new_table {
-      results = state.results,
+      results = db_client.get_file_scores(state.show_unindexed, nil),
       entry_maker = entry_maker,
     },
     previewer = conf.file_previewer(opts),

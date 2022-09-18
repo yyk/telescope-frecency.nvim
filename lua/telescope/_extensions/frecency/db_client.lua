@@ -2,18 +2,7 @@ local sqlwrap = require("telescope._extensions.frecency.sql_wrapper")
 local scandir = require("plenary.scandir").scan_dir
 local util    = require("telescope._extensions.frecency.util")
 
-local MAX_TIMESTAMPS = 10
 local DB_REMOVE_SAFETY_THRESHOLD = 10
-
--- modifier used as a weight in the recency_score calculation:
-local recency_modifier = {
-  [1] = { age = 240   , value = 100 }, -- past 4 hours
-  [2] = { age = 1440  , value = 80  }, -- past day
-  [3] = { age = 4320  , value = 60  }, -- past 3 days
-  [4] = { age = 10080 , value = 40  }, -- past week
-  [5] = { age = 43200 , value = 20  }, -- past month
-  [6] = { age = 129600, value = 10  }  -- past 90 days
-}
 
 local default_ignore_patterns = {
   "*.git/*", "*/tmp/*"
@@ -108,33 +97,6 @@ local function init(db_root, config_ignore_patterns, safe_mode, auto_validate)
   vim.api.nvim_command("augroup END")
 end
 
-local function calculate_file_score(frequency, timestamps)
-  -- local recency_score = 0
-  for _, ts in pairs(timestamps) do
-    return ts.seconds
-  end
-  --   for _, rank in ipairs(recency_modifier) do
-  --     if ts.age <= rank.age then
-  --       recency_score = recency_score + rank.value
-  --       goto continue
-  --     end
-  --   end
-  --   ::continue::
-  -- end
-  --
-  -- return frequency * recency_score / MAX_TIMESTAMPS
-end
-
-local function filter_timestamps(timestamps, file_id)
-  local res = {}
-  for _, entry in pairs(timestamps) do
-    if entry.file_id == file_id then
-      table.insert(res, entry)
-    end
-  end
-  return res
-end
-
 -- -- TODO: optimize this
 -- local function find_in_table(tbl, target)
 --   for _, entry in pairs(tbl) do
@@ -207,14 +169,15 @@ local function autocmd_handler(filepath)
   if not sql_wrapper or util.string_isempty(filepath) then return end
 
   -- check if file is registered as loaded
-  if not vim.b.telescope_frecency_registered then
-    -- allow [noname] files to go unregistered until BufWritePost
-    if not util.fs_stat(filepath).exists then return end
-    if file_is_ignored(filepath) then return end
+  -- if not vim.b.telescope_frecency_registered then
+  -- allow [noname] files to go unregistered until BufWritePost
+  if not util.fs_stat(filepath).exists then return end
+  if file_is_ignored(filepath) then return end
 
-    vim.b.telescope_frecency_registered = 1
-    sql_wrapper:update(filepath)
-  end
+  -- vim.b.telescope_frecency_registered = 1
+  sql_wrapper:update(filepath)
+  vim.notify("Telescope-Frecency: updated " .. filepath)
+  -- end
 end
 
 return {
