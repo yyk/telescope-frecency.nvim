@@ -132,7 +132,7 @@ local queries = {
   },
   timestamp_get_all_entry_most_recent_ages = {
     cmd      = cmd.eval,
-    cmd_data = "SELECT id, file_id, CAST((julianday('now') - julianday(max(timestamp))) * 24 * 60 AS INTEGER) AS age FROM timestamps group by file_id;"
+    cmd_data = "SELECT id, file_id, CAST((julianday('now') - julianday(max(timestamp))) * 24 * 60 * 60 AS INTEGER) AS seconds FROM timestamps group by file_id;"
   },
   timestamp_delete_before_id = {
     cmd      = cmd.eval,

@@ -97,6 +97,18 @@ local function get_workspace_tags()
   return tags
 end
 
+local function pretty_score(seconds)
+  if seconds >= 24 * 60 * 60 then
+    return string.format("%dd", seconds / (24 * 60 * 60))
+  elseif seconds >= 60 * 60 then
+    return string.format("%dh", seconds / (60 * 60))
+  elseif seconds >= 60 then
+    return string.format("%dm", seconds / 60)
+  else
+    return string.format("%ds", seconds)
+  end
+end
+
 local frecency = function(opts)
   opts = opts or {}
 
@@ -141,7 +153,7 @@ local frecency = function(opts)
     hl_filename = buf_is_loaded(bufnr(display_filename)) and "TelescopeBufferLoaded" or ""
     -- display_filename = format_filepath(display_filename, opts)
 
-    display_items = state.show_scores and { { entry.score, "TelescopeFrecencyScores" } } or {}
+    display_items = state.show_scores and { { pretty_score(entry.score), "TelescopeFrecencyScores" } } or {}
 
     if has_devicons and not state.disable_devicons then
       icon, icon_highlight = devicons.get_icon(entry.name, string.match(entry.name, "%a+$"), { default = true })

@@ -111,7 +111,7 @@ end
 local function calculate_file_score(frequency, timestamps)
   -- local recency_score = 0
   for _, ts in pairs(timestamps) do
-    return ts.age
+    return ts.seconds
   end
   --   for _, rank in ipairs(recency_modifier) do
   --     if ts.age <= rank.age then
