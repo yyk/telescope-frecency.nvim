@@ -7,7 +7,7 @@ if not has_sqlite then
 end
 
 -- TODO: pass in max_timestamps from db.lua
-local MAX_TIMESTAMPS = 10
+local MAX_TIMESTAMPS = 1
 
 local db_table = {}
 db_table.files       = "files"
