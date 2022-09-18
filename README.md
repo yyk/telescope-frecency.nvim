@@ -1,3 +1,8 @@
+# Fork Note
+This is a fork that disregards frequency and only cares about recency. I find recency to be more useful day to day.
+
+Below is the original README.
+
 # telescope-frecency.nvim
 
 A [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) extension that offers intelligent prioritization when selecting files from your editing history.
