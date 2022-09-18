@@ -109,18 +109,20 @@ local function init(db_root, config_ignore_patterns, safe_mode, auto_validate)
 end
 
 local function calculate_file_score(frequency, timestamps)
-  local recency_score = 0
+  -- local recency_score = 0
   for _, ts in pairs(timestamps) do
-    for _, rank in ipairs(recency_modifier) do
-      if ts.age <= rank.age then
-        recency_score = recency_score + rank.value
-        goto continue
-      end
-    end
-    ::continue::
+    return ts.age
   end
-
-  return frequency * recency_score / MAX_TIMESTAMPS
+  --   for _, rank in ipairs(recency_modifier) do
+  --     if ts.age <= rank.age then
+  --       recency_score = recency_score + rank.value
+  --       goto continue
+  --     end
+  --   end
+  --   ::continue::
+  -- end
+  --
+  -- return frequency * recency_score / MAX_TIMESTAMPS
 end
 
 local function filter_timestamps(timestamps, file_id)
@@ -183,7 +185,7 @@ local function get_file_scores(show_unindexed, workspace_path)
 
   local queries = sql_wrapper.queries
   local files           = sql_wrapper:do_transaction(queries.file_get_entries, {})
-  local timestamp_ages  = sql_wrapper:do_transaction(queries.timestamp_get_all_entry_ages, {})
+  local timestamp_ages  = sql_wrapper:do_transaction(queries.timestamp_get_all_entry_most_recent_ages , {})
 
   local scores = {}
   if vim.tbl_isempty(files) then return scores end
@@ -199,7 +201,7 @@ local function get_file_scores(show_unindexed, workspace_path)
   end
 
   -- sort the table
-  table.sort(scores, function(a, b) return a.score > b.score end)
+  table.sort(scores, function(a, b) return a.score < b.score end)
 
   return scores
 end

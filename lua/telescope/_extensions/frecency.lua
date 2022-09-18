@@ -209,7 +209,7 @@ local frecency = function(opts)
   local filter_re = "^%s*(" .. delim .. "(%S+)" .. delim .. ")"
 
   state.picker = pickers.new(opts, {
-    prompt_title = "Frecency",
+    prompt_title = "Recent Files",
     on_input_filter_cb = function(query_text)
       -- check for :filter: in query text
       local matched, new_filter = query_text:match(filter_re)
