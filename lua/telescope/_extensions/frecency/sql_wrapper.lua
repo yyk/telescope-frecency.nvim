@@ -1,5 +1,6 @@
 local util = require("telescope._extensions.frecency.util")
 local vim = vim
+local Path = require("plenary.path")
 
 local has_sqlite, sqlite = pcall(require, "sqlite")
 if not has_sqlite then
@@ -99,7 +100,7 @@ local queries = {
 	},
 	recency_score = {
 		cmd = cmd.eval,
-		cmd_data = "select path, CAST((julianday('now') - julianday(timestamp)) * 24 * 60 * 60 AS INTEGER) seconds from files order by seconds;",
+		cmd_data = "select path, CAST((julianday('now') - julianday(timestamp)) * 24 * 60 * 60 AS INTEGER) seconds from files where path != :exclude order by seconds;",
 	},
 }
 
@@ -112,6 +113,7 @@ local function row_id(entry)
 end
 
 function M:update(filepath)
+	filepath = Path:new(filepath):absolute()
 	local filestat = util.fs_stat(filepath)
 	if vim.tbl_isempty(filestat) or filestat.exists == false or filestat.isdirectory == true then
 		return

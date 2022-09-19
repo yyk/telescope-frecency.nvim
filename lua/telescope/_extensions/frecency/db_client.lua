@@ -1,5 +1,6 @@
 local sqlwrap = require("telescope._extensions.frecency.sql_wrapper")
 local util = require("telescope._extensions.frecency.util")
+local Path = require("plenary.path")
 
 local DB_REMOVE_SAFETY_THRESHOLD = 10
 
@@ -116,7 +117,10 @@ local function get_file_scores()
 	end
 
 	local queries = sql_wrapper.queries
-	local files = sql_wrapper:do_transaction(queries.recency_score, {})
+	local current_file = vim.fn.expand("%:p")
+	current_file = Path:new(current_file):absolute()
+	print(current_file)
+	local files = sql_wrapper:do_transaction(queries.recency_score, { exclude = current_file })
 
 	local scores = {}
 	if vim.tbl_isempty(files) then
