@@ -40,6 +40,7 @@ local function validate_db(safe_mode)
 
 	local queries = sql_wrapper.queries
 	local files = sql_wrapper:do_transaction(queries.file_get_entries, {})
+	print("Telescope-Frecency: total entries in db: " .. #files)
 	local pending_remove = {}
 	for _, entry in pairs(files) do
 		if
@@ -119,7 +120,7 @@ local function get_file_scores()
 	local queries = sql_wrapper.queries
 	local current_file = vim.fn.expand("%:p")
 	current_file = Path:new(current_file):absolute()
-	print(current_file)
+	-- print(current_file)
 	local files = sql_wrapper:do_transaction(queries.recency_score, { exclude = current_file })
 
 	local scores = {}

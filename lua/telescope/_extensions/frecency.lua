@@ -57,36 +57,19 @@ local frecency = function(opts)
 		items = get_display_cols(),
 	})
 
-	local bufnr, buf_is_loaded, display_filename, hl_filename, display_items, icon, icon_highlight
+	local display_items, icon, icon_highlight
 	local make_display = function(entry)
-		bufnr = vim.fn.bufnr
-		buf_is_loaded = vim.api.nvim_buf_is_loaded
-		display_filename = entry.name
-		hl_filename = buf_is_loaded(bufnr(display_filename)) and "TelescopeBufferLoaded" or ""
-
-		display_items = state.show_scores and { { pretty_score(entry.score), "TelescopeFrecencyScores" } } or {}
+		display_items = state.show_scores and { { pretty_score(entry.score), "" } } or {}
 
 		if has_devicons and not state.disable_devicons then
 			icon, icon_highlight = devicons.get_icon(entry.name, string.match(entry.name, "%a+$"), { default = true })
 			table.insert(display_items, { icon, icon_highlight })
 		end
 
-		table.insert(display_items, { display_filename, hl_filename })
+		table.insert(display_items, { entry.name, "" })
 
 		return displayer(display_items)
 	end
-
-	local update_results = function()
-		local filter_updated = false
-
-		if vim.tbl_isempty(state.results) or filter_updated then
-			state.results = db_client.get_file_scores()
-		end
-		return filter_updated
-	end
-
-	-- populate initial results
-	update_results()
 
 	local entry_maker = function(entry)
 		return {
@@ -123,21 +106,6 @@ local frecency = function(opts)
 	state.picker:find()
 
 	vim.api.nvim_buf_set_option(state.picker.prompt_bufnr, "filetype", "frecency")
-	vim.api.nvim_buf_set_option(state.picker.prompt_bufnr, "completefunc", "frecency#FrecencyComplete")
-	vim.api.nvim_buf_set_keymap(
-		state.picker.prompt_bufnr,
-		"i",
-		"<Tab>",
-		"pumvisible() ? '<C-n>'  : '<C-x><C-u>'",
-		{ expr = true, noremap = true }
-	)
-	vim.api.nvim_buf_set_keymap(
-		state.picker.prompt_bufnr,
-		"i",
-		"<S-Tab>",
-		"pumvisible() ? '<C-p>'  : ''",
-		{ expr = true, noremap = true }
-	)
 end
 
 local function set_config_state(opt_name, value, default)
@@ -153,16 +121,16 @@ local function checkhealth()
 		health_ok("sql.nvim installed.")
 	-- return "MOOP"
 	else
-		health_error("NOOO")
+		health_error("sqlite not loaded")
 	end
 end
 
 return telescope.register_extension({
 	setup = function(ext_config)
 		set_config_state("db_root", ext_config.db_root, nil)
-		set_config_state("show_scores", ext_config.show_scores, false)
+		set_config_state("show_scores", ext_config.show_scores, true)
 		set_config_state("disable_devicons", ext_config.disable_devicons, false)
-		set_config_state("display_full_path", ext_config.display_full_path, nil)
+		set_config_state("display_full_path", ext_config.display_full_path, true)
 
 		-- start the database client
 		db_client.init(
